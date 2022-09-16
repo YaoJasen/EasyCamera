@@ -18,11 +18,11 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
-import android.widget.Button;
+
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -32,6 +32,7 @@ import java.util.Comparator;
 
 public class EasyCameraActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
+    private static final String TAG = "EASY_CAMERA";
 
     private TextureView mTextureView;
 
@@ -39,7 +40,7 @@ public class EasyCameraActivity extends AppCompatActivity {
     private CameraDevice mCameraDevice;
     private Size mPreviewSize;
 
-    private CameraV1GLRenderer mRenderer;
+    private CameraGLRenderer mRenderer;
 
     /*请求抓取相机图像帧的会话，会话的建立主要会建立起一个通道。一个CameraDevice一次只能开启一个CameraCaptureSession。
     源端是相机，另一端是 Target，Target可以是Preview，也可以是ImageReader。*/
@@ -109,7 +110,7 @@ public class EasyCameraActivity extends AppCompatActivity {
         assert mTextureView != null;
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
 
-        mRenderer = new CameraV1GLRenderer();
+        mRenderer = new CameraGLRenderer();
     }
 
     private void openCamera() {
@@ -180,11 +181,14 @@ public class EasyCameraActivity extends AppCompatActivity {
     }
 
     private void createCameraPreviewSession() {
+        Log.d(TAG, "createCameraPreviewSession: in");
         try {
-            SurfaceTexture texture;
-            int mOESTextureId = -1;
+            int mOESTextureId;
+
             mOESTextureId = Utils.createOESTextureObject();
             mRenderer.init(mTextureView, mOESTextureId, EasyCameraActivity.this);
+
+            SurfaceTexture texture;
             texture = mRenderer.initOESTexture();
 
             //SurfaceTexture texture = mTextureView.getSurfaceTexture();
@@ -224,6 +228,7 @@ public class EasyCameraActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "createCameraPreviewSession: out");
     }
 
     private void setAutoFlash(CaptureRequest.Builder captureRequestBuilder) {
@@ -256,6 +261,7 @@ public class EasyCameraActivity extends AppCompatActivity {
     protected void onPause() {
         stopBackgroundThread();
         releaseCamera();
+        mRenderer.onPause();
         super.onPause();
     }
 

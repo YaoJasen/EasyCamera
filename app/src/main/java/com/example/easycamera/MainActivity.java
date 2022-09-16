@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     View.OnClickListener mOnClickListener = view -> {
-        if (view.getId() == R.id.start_pre_btn) {
+        if (view.getId() == R.id.start_pre_btn && mCameraDevice == null) {
             openCamera();
-        } else if (view.getId() == R.id.stop_pre_btn) {
+        } else if (view.getId() == R.id.stop_pre_btn && mCameraDevice != null) {
             releaseCamera();
         }
     };

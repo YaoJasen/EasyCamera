@@ -16,11 +16,14 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class Utils {
-
+    //创建OES纹理ID
     public static int createOESTextureObject() {
         int[] tex = new int[1];
+        //生成纹理
         GLES20.glGenTextures(1, tex, 0);
+        //绑定纹理
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex[0]);
+        //设置放大缩小。设置边缘测量
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
@@ -35,12 +38,12 @@ public class Utils {
 
     public static String readShaderFromResource(Context context, int resourceId) {
         StringBuilder builder = new StringBuilder();
-        InputStream is = null;
+        InputStream inputStream = null;
         InputStreamReader isr = null;
         BufferedReader br = null;
         try {
-            is = context.getResources().openRawResource(resourceId);
-            isr = new InputStreamReader(is);
+            inputStream = context.getResources().openRawResource(resourceId);
+            isr = new InputStreamReader(inputStream);
             br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
@@ -50,17 +53,14 @@ public class Utils {
             e.printStackTrace();
         } finally {
             try {
-                if (is != null) {
-                    is.close();
-                    is = null;
+                if (inputStream != null) {
+                    inputStream.close();
                 }
                 if (isr != null) {
                     isr.close();
-                    isr = null;
                 }
                 if (br != null) {
                     br.close();
-                    br = null;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
